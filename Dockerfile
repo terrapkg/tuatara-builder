@@ -9,4 +9,4 @@ RUN zypper addrepo https://raw.githubusercontent.com/terrapkg/tuatara/refs/heads
     zypper up -y && \
     zypper install -y \
 subatomic-cli anda{,-srpm-macros} tuatara-build-key terra-appstream-helper gh git-core wget less mold osc openssh sudo jq \
-cargo-packaging '*-rpm-macros'
+rust cargo cargo-packaging '*-rpm-macros'
