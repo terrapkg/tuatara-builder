@@ -1,53 +1,30 @@
-name: Docker
+name: Docker Publish
 permissions:
   contents: read
 on:
   workflow_dispatch:
   schedule:
-    - cron: "0 0/6 * * *"
+    - cron: "0 0/2 * * *"
   push:
-    branches:
-      - tumbleweed
-
-env:
-  REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
+    branches: ["tumbleweed"]
 
 jobs:
   build:
-    name: Build Image
-    runs-on: ubuntu-24.04-arm
+    strategy:
+      fail-fast: false
+      matrix:
+        branch: ["tumbleweed"]
+    uses: ./.github/workflows/docker.yml
+    secrets: inherit
     permissions:
       contents: read
       packages: write
-    strategy:
-      matrix:
-        branch: ["tumbleweed"]
-      fail-fast: false
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          ref: ${{ matrix.branch }}
-
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@99012661954931238ded8c8b007157a8430204e1 # v4.4.0
-
-      - name: Setup Docker buildx
-        uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
-
-      - name: Log into registry ${{ env.REGISTRY }}
-        if: ${{ github.event_name != 'pull_request' }}
-        uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550 # v4.8.0
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Build and push Docker image
-        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
-        with:
-          context: .
-          platforms: linux/amd64,linux/arm64
-          push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ matrix.branch }}
+      id-token: write
+    with:
+      publish: ${{ github.event_name != 'pull_request' }}
+      ref: ${{ matrix.branch }}
+      artifact_name: digests-${{ matrix.branch }}
+      tags: |
+        type=raw,value=${{ matrix.branch }}
+        type=schedule,pattern=${{ matrix.branch }}-{{date 'X'}}
+        type=schedule,pattern=nightly-{{date 'X'}}
