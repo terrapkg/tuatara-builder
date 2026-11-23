@@ -10,5 +10,21 @@ RUN zypper addrepo https://raw.githubusercontent.com/terrapkg/tuatara/refs/heads
     zypper refresh && \
     zypper update -y && \
     zypper install -y \
-satm anda{,-srpm-macros} terra-appstream-helper gh git-core wget less mold osc openssh sudo jq \
-rust cargo cargo-packaging cmake-full meson python-rpm-macros
+    anda \
+    anda-srpm-macros \
+    cargo \
+    cargo-packaging \
+    cmake-full \
+    gh \
+    git-core \
+    jq \
+    less \
+    meson \
+    mold \
+    osc \
+    openssh \
+    python-rpm-macros \
+    rust \
+    sudo \
+    terra-appstream-helper \
+    wget
