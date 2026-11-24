@@ -25,6 +25,7 @@ RUN zypper addrepo https://raw.githubusercontent.com/terrapkg/tuatara/refs/heads
     openssh \
     python-rpm-macros \
     rust \
+    satm \
     sudo \
     terra-appstream-helper \
     wget
